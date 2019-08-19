@@ -1,0 +1,25 @@
+<IfModule mod_rewrite.c>
+
+	RewriteEngine On
+
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+
+	### Rule untuk menyembunyikan file ekstensi php
+	RewriteCond %{REQUEST_FILENAME}.php -f
+	RewriteRule ^(.*)$ $1.php
+	# RewriteRule ^([a-z]+)\/?$ $1.php [NC]
+
+	### Rule untuk menyembunyikan file ekstensi html
+	RewriteCond %{REQUEST_FILENAME}.html -f
+	RewriteRule ^(.*)$ $1.html
+	# RewriteRule ^([a-z]+)\/?$ $1.html [NC]
+
+	#### Mengarahkan domain utama ke folder "myproject"
+	# RewriteEngine On
+	# RewriteCond %{HTTP_HOST} ^domain\.com$ [OR]
+	# RewriteCond %{HTTP_HOST} ^www\.domain\.com$
+	# RewriteCond %{REQUEST_URI} !^/myproject/
+	# RewriteRule (.*) /myproject/$1
+
+</IfModule>
