@@ -1,3 +1,17 @@
+<?php
+  if(!isset($_SESSION))
+  {
+  session_start();
+  }
+
+  if( !isset($_SESSION['login']) )
+  {
+    header('location: login');
+    exit();
+  }
+  include 'config/basisdata.php';
+  include 'function/data.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>    
@@ -25,9 +39,67 @@
       <div class="row user">
         <div class="col-md-12">
           <div class="profile">
-            <div class="info">
-            <img class='user-img' src='assets/images/user.png'>                   
-              <span>Nama User</span>
+            <div class="info">              
+              <?php                
+                if ($_SESSION['tahunmasuk'] >= 2015)
+                {
+                    $url = "https://akademik.pasca.ipb.ac.id/2015/foto/".$nim."_".$strata."_".$kodeps.".jpg";
+                    function is_webUrl($url)
+                    {
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, $url);                        
+                        curl_setopt($ch, CURLOPT_NOBODY, 1);
+                        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        if (curl_exec($ch) !== FALSE) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    if(is_webUrl($url))
+                    {
+                        echo "<img class='user-img' src='$url'>";
+                    }
+                    else
+                    {
+                        echo "<img class='user-img' src='assets/images/user.png'>";
+                    }
+                }
+                else
+                {
+                    $url1 = "https://akademik.pasca.ipb.ac.id/foto/".$nim."_".$strata."_".$kodeps.".jpg";
+                    function is_webUrl($url1)
+                    {
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, $url1);
+                        // don't download content
+                        curl_setopt($ch, CURLOPT_NOBODY, 1);
+                        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        if (curl_exec($ch) !== FALSE) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    if(is_webUrl($url1))
+                    {
+                        echo  "<img class='user-img' src='$url1'>";
+                    }
+                    else
+                    {
+                        echo "<img class='user-img' src='assets/images/user.png'>";
+                    }
+                }
+              ?>              
+              <span>
+                <?php
+                  if (isset($_SESSION['login'])) {                    
+                    echo $nama;                    
+                  }
+                ?>                
+                </span>
             </div>
             <div class="cover-image">
               <figure></figure>
@@ -53,7 +125,22 @@
                   <div class="content">
                     <h5><a href="#">SPs IPB</a></h5>
                     <p class="text-muted">
-                      <small>                                             
+                      <small>
+                        <?php
+                            date_default_timezone_set('Asia/Jakarta');            
+                            $day = date ("D");
+                            switch ($day) {
+                              case 'Mon' : $hari = "Senin"; break;
+                              case 'Tue' : $hari = "Selasa"; break;
+                              case 'Wed' : $hari = "Rabu"; break;
+                              case 'Thu' : $hari = "Kamis"; break;
+                              case 'Fri' : $hari = "Jum'at"; break;
+                              case 'Sat' : $hari = "Sabtu"; break;
+                              case 'Sun' : $hari = "Minggu"; break;
+                              default : $hari = "Undefined";
+                            }
+                            echo $hari .", ". date("d-m-Y") ." || ". date("H:i:s") ." WIB";
+                        ?>                          
                       </small>
                     </p>
                   </div>
@@ -71,14 +158,14 @@
                 <h4 class="line-head">Status</h4>
                 
                 <div class="datamhs">
-                  <ul class="datamhs">
-                  
-                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">NIM</div><div class="titikdua">: </div><div class="isiprofil"><!-- nim --></div></a></li>
-                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">Strata</div><div class="titikdua">: </div><div class="isiprofil"><!-- echo strata==4 ? 'S3' : 'S2' --> </div></a></li>
-                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">Mayor</div><div class="titikdua">: </div><div class="isiprofil"><!-- kodeps (mayor) --> </div></a></li>
-                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">Jalur Masuk</div><div class="titikdua">: </div><div class="isiprofil"><!-- jalur --></div></a></li>
-                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">Status</div><div class="titikdua">: </div><div class="isiprofil"><!-- echo strata==4 ? status3 : status2 --> </div></a></li>
-                  
+                  <ul class="datamhs">                  
+                  <?php if (isset($_SESSION['login'])) : ?>
+                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">NIM</div><div class="titikdua">: </div><div class="isiprofil"><?=$nim?></div></a></li>
+                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">Strata</div><div class="titikdua">: </div><div class="isiprofil"><?php echo $strata==4 ? 'S3' : 'S2' ?></div></a></li>
+                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">Mayor</div><div class="titikdua">: </div><div class="isiprofil"><?=$kodeps?> (<?=$mayor?>) </div></a></li>
+                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">Jalur Masuk</div><div class="titikdua">: </div><div class="isiprofil"><?=$jalur?></div></a></li>
+                    <li class="datamhs nilai"><a class="datamhs"><div class="profil">Status</div><div class="titikdua">: </div><div class="isiprofil"><?php echo $strata==4 ? $status3 : $status2 ?></div></a></li>
+                  <?php endif; ?>
                   </ul>
                 </div>
                 
